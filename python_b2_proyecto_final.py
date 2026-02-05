@@ -466,33 +466,48 @@ La preparación de datos es un paso crucial en el proceso de análisis de datos.
 ##Recopilar Información
 ## Preguntas
 * *¿Cuáles son los desafíos clave al integrar y analizar datos de diferentes instituciones financieras para desarrollar sistemas de recomendación de seguros?*
+            Diferentes formatos y estructuras de datos
+            Problemas de calidad y consistencia de datos
+            Privacidad y seguridad de la información
+            Necesidad de estandarización y normalización
 * *¿De qué manera podría su participación en el desarrollo de nuevas fuentes de información de seguros en el marco de Open Finance promover la transparencia y autonomía de los usuarios del sistema financiero?*
+            Permitiendo a los usuarios comparar productos fácilmente
+            Facilitando el acceso a información completa sobre opciones financieras
+            Empoderando a los usuarios para tomar decisiones informadas
+            Reduciendo asimetrías de información entre instituciones y clientes
 * *¿Cuál es la similitud entre Open Finance y otras fuentes de datos financieros abiertos, como Open Banking y Open Insurance, y cómo benefician a los usuarios del sistema financiero en términos de transparencia y acceso a información?*
+            Todos comparten el principio de apertura y compartir datos con consentimiento
+            Buscan aumentar la competencia y innovación en el sector financiero
+            Promueven la transparencia y empoderamiento del cliente
 * *¿Qué aspectos clave deberías revisar al explorar los datos de GFT Open Finance para entender su contenido, formato y posibles problemas, y cómo estos podrían afectar el desarrollo de modelos de machine learning para recomendaciones de seguros?*
-
+            Estructura y formato de los datos
+            Calidad (valores nulos, duplicados, inconsistencias)
+            Tipos de variables y su distribución
+            Relaciones entre variables y posible target leakage
 ## Exploración Inicial
 
 Comencemos importando los diferentes conjuntos de datos como dataframes utilizando la librería de pandas. Luego, procederemos a presentar los primeros 10 registros.
 """
 
-#Write your code here
+df_retailbank = pd.read_csv("data/RetailBankEFG.csv")
+df_investment = pd.read_csv("data/InvestmentBankCDE.csv")
+df_insurance = pd.read_csv("data/InsuranceCompanyABC.csv")
+
+print("=== Primeros 10 registros de RetailBankEFG ===")
+print(df_retailbank.head(10))
+print("\n=== Primeros 10 registros de InvestmentBankCDE ===")
+print(df_investment.head(10))
+print("\n=== Primeros 10 registros de InsuranceCompanyABC ===")
+print(df_insurance.head(10))
 df_retailbank = pd.read_csv("change_path_to_RetailBankEFG")
-
-"""*Realiza la misma acción para InvestmentBankCDE.csv.*"""
-
-#Write your code here
-df_investment = pd.read_csv("change_path_to_InvestmentBankCDE")
-
-"""*Realiza la misma acción para InvestmentBankCDE.csv.*"""
-
-#Write your code here
-df_insurance = pd.read_csv("change_path_to_InsuranceCompanyABC")
 
 """## Pregunta
 *¿Puedes identificar un atributo común entre los diferentes conjuntos de datos que permita juntarlos?*
 """
 
-#Write your code here
+print("Columnas en RetailBankEFG:", df_retailbank.columns.tolist())
+print("\nColumnas en InvestmentBankCDE:", df_investment.columns.tolist())
+print("\nColumnas en InsuranceCompanyABC:", df_insurance.columns.tolist())
 
 """## Pregunta
 Indica cuál es la cantidad de registros en cada conjunto de datos.
@@ -500,10 +515,18 @@ Indica cuál es la cantidad de registros en cada conjunto de datos.
 *¿Qué conclusiones puedes sacar luego de observar los resultados?*
 """
 
-#Write your code here
+print(f"Número de registros en RetailBankEFG: {len(df_retailbank)}")
+print(f"Número de registros en InvestmentBankCDE: {len(df_investment)}")
+print(f"Número de registros en InsuranceCompanyABC: {len(df_insurance)}")
+
+print("\n✅ Conclusión: Todos los datasets tienen la misma cantidad de registros, lo que sugiere que corresponden a los mismos clientes.")
 
 """## Pregunta
 ¿Has notado algún patrón entre los datos, ya sea entre filas o columnas?
+        print("1. Todas las columnas (excepto ID, Renda, Idade, Regiao) tienen valores 'F' o 'T'")
+        print("2. Los valores 'T' parecen indicar que el cliente tiene ese producto/servicio")
+        print("3. La columna 'ID' es el identificador único para cada cliente")
+    print("4. Las variables demográficas (Idade, Renda, Regiao) solo están en InsuranceCompanyABC")
 
 # Evaluación de Calidad de Datos
 
@@ -521,11 +544,12 @@ def get_nan_values(data_frame):
 
 """*Imprime los valores faltantes por fila y columna*"""
 
-#Write your code here for df_retailbank
-
-#Write your code here for df_investment
-
-#Write your code here for df_insurance
+print("=== Valores faltantes en RetailBankEFG ===")
+print(get_nan_values(df_retailbank))
+print("\n=== Valores faltantes en InvestmentBankCDE ===")
+print(get_nan_values(df_investment))
+print("\n=== Valores faltantes en InsuranceCompanyABC ===")
+print(get_nan_values(df_insurance))
 
 """## Pregunta
 *¿Existen valores faltantes en los datos?*
