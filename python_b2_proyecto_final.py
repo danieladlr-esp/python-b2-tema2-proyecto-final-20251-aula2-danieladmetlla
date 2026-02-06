@@ -580,7 +580,9 @@ def check_duplicates(data_frame, column):
 
 """*Imprime la cantidad de filas duplicadas para df_retailbank, df_investment y df_insurance*"""
 
-#Write your code here
+print(f"Duplicados en RetailBankEFG (por ID): {check_duplicates(df_retailbank, 'ID')}")
+print(f"Duplicados en InvestmentBankCDE (por ID): {check_duplicates(df_investment, 'ID')}")
+print(f"Duplicados en InsuranceCompanyABC (por ID): {check_duplicates(df_insurance, 'ID')}")
 
 """## Pregunta
 ¿Existen datos duplicados?
