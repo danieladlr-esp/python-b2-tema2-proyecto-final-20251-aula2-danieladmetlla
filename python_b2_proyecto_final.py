@@ -519,7 +519,7 @@ print(f"Número de registros en RetailBankEFG: {len(df_retailbank)}")
 print(f"Número de registros en InvestmentBankCDE: {len(df_investment)}")
 print(f"Número de registros en InsuranceCompanyABC: {len(df_insurance)}")
 
-print("\n✅ Conclusión: Todos los datasets tienen la misma cantidad de registros, lo que sugiere que corresponden a los mismos clientes.")
+print("\n Conclusión: Todos los datasets tienen la misma cantidad de registros, lo que sugiere que corresponden a los mismos clientes.")
 
 """## Pregunta
 ¿Has notado algún patrón entre los datos, ya sea entre filas o columnas?
@@ -553,6 +553,7 @@ print(get_nan_values(df_insurance))
 
 """## Pregunta
 *¿Existen valores faltantes en los datos?*
+        print("Respuesta: No hay valores faltantes en ninguno de los datasets.")
 
 ## Duplicados
 Vamos a detectar si existen filas duplicadas que pueden distorsionar los análisis. Para ello, vamos a validar si hay registros duplicados en el conjunto de datos utilizando la función `check_duplicates`. En caso afirmativo, necesitaremos pasar como parámetros el dataframe a validar y la columna que se utiliza como identificador.
@@ -583,6 +584,10 @@ def check_duplicates(data_frame, column):
 
 """## Pregunta
 ¿Existen datos duplicados?
+        print(f"Duplicados en RetailBankEFG (por ID): {check_duplicates(df_retailbank, 'ID')}")
+        print(f"Duplicados en InvestmentBankCDE (por ID): {check_duplicates(df_investment, 'ID')}")
+        print(f"Duplicados en InsuranceCompanyABC (por ID): {check_duplicates(df_insurance, 'ID')}")
+        print("Respuesta: No hay duplicados en la columna ID de ningún dataset.")
 
 ## Inconsistencias
 En esta sección, se propondrán varios métodos para identificar inconsistencias en los datos. Primero, vamos a revisar las estadísticas básicas. Para ello, utilizaremos la función `describe()`.
@@ -590,11 +595,13 @@ En esta sección, se propondrán varios métodos para identificar inconsistencia
 *Imprime las estadísticas básicas*
 """
 
-#Write your code here for df_retailbank
+print("=== Estadísticas básicas RetailBankEFG ===")
+print(df_retailbank.describe())
+print("\n=== Estadísticas básicas InvestmentBankCDE ===")
+print(df_investment.describe())
+print("\n=== Estadísticas básicas InsuranceCompanyABC ===")
+print(df_insurance.describe())
 
-#Write your code here for df_investment
-
-#Write your code here for df_insurance
 
 """### Identificar Valores Únicos:
 Ahora, para todas las variables no numéricas, debemos identificar cuántos tipos de datos están registrados en cada columna. Implementaremos la función `get_value_counts_non_numeric_columns`, la cual obtiene los conteos de valores de las columnas no numéricas en un DataFrame y devuelve un diccionario donde las claves son los nombres de las columnas no numéricas y los valores son sus respectivos conteos de valores.
@@ -624,34 +631,55 @@ def get_value_counts_non_numeric_columns(df):
     Returns:
     dict: A dictionary where keys are non-numeric column names and values are their respective value counts.
     """
-    # write your code here
-    #Get non-numeric columns
-    #pass
+    non_numeric_cols = find_non_numeric_columns(df)
+    value_counts_dict = {}
+    
+    for col in non_numeric_cols:
+        if df[col].nunique() <= 10:  
+            value_counts_dict[col] = df[col].value_counts()
+    
+    return value_counts_dict
+
 
 """*Imprime los conteos de las columnas no numéricas.*"""
 
-#Write your code here for df_retailbank
+print("=== Conteos columnas no numéricas - RetailBankEFG ===")
+for col, counts in get_value_counts_non_numeric_columns(df_retailbank).items():
+    print(f"\n{col}:")
+    print(counts)
 get_value_counts_non_numeric_columns(df_retailbank)
 
-#Write your code here for df_investment
+print("\n=== Conteos columnas no numéricas - InvestmentBankCDE ===")
+for col, counts in get_value_counts_non_numeric_columns(df_investment).items():
+    print(f"\n{col}:")
+    print(counts)
 get_value_counts_non_numeric_columns(df_investment)
 
-#Write your code here for df_insurance
+print("\n=== Conteos columnas no numéricas - InsuranceCompanyABC ===")
+for col, counts in get_value_counts_non_numeric_columns(df_insurance).items():
+    print(f"\n{col}:")
+    print(counts)
 get_value_counts_non_numeric_columns(df_insurance)
 
 """### Verificar Tipos de Datos:
 *Utiliza el atributo `dtypes` para verificar los tipos de datos de cada columna.*
 """
 
-#Write your code here for df_retailbank
+print("=== Tipos de datos RetailBankEFG ===")
+print(df_retailbank.dtypes)
+print("\n=== Tipos de datos InvestmentBankCDE ===")
+print(df_investment.dtypes)
+print("\n=== Tipos de datos InsuranceCompanyABC ===")
+print(df_insurance.dtypes)
 
-#Write your code here for df_investment
-
-#Write your code here for df_insurance
 
 """## Pregunta
 *¿Qué puedes concluir respecto de todas las variables que no son numéricas?*
 *¿Has identificado algún patrón o característica?*
+        print("1. Las columnas 'F'/'T' están correctamente tipadas como object")
+        print("2. La columna 'Regiao' tiene valores categóricos (SE, NE, etc.)")
+        print("3. Todas las columnas binarias solo tienen valores 'F' y 'T'")
+        print("4. No hay inconsistencias en los formatos de datos")
 
 ## Visualización General de los datos y Analizar Patrones Anómalos
 Esta es una sección libre en la que podrás crear diferentes visualizaciones de los datos. Sugiero que utilices principalmente visualizaciones para validar la cantidad de datos de las variables no numéricas. Además, debes realizar gráficas tipo box plot para las columnas numéricas, exceptuando la columna ID.
@@ -665,11 +693,31 @@ Esta es una sección libre en la que podrás crear diferentes visualizaciones de
 - **Box plot para cada columna numérica (excluyendo la columna ID):** Utiliza box plots para visualizar la distribución de los datos, los valores atípicos y la mediana en cada columna numérica.
 """
 
-#Write your code here, add your custom plots for df_retailbank
+plt.figure(figsize=(12, 6))
+binary_cols_retail = [col for col in df_retailbank.columns if col not in ['ID'] and df_retailbank[col].dtype == 'object']
+
+counts_T = []
+for col in binary_cols_retail[:10]:  
+    counts_T.append((col, (df_retailbank[col] == 'T').sum()))
+
+cols, counts = zip(*counts_T)
+plt.bar(cols, counts)
+plt.title('Cantidad de "T" por columna en RetailBankEFG (primeras 10)')
+plt.xticks(rotation=90)
+plt.ylabel('Cantidad')
+plt.show()
 
 #Write your code here, add your custom plots for df_investment
 
-#Write your code here, add your custom plots for df_insurance
+plt.subplot(1, 3, 3)
+numeric_cols_insurance = df_insurance.select_dtypes(include=['int64', 'float64']).columns
+numeric_cols_insurance = [col for col in numeric_cols_insurance if col != 'ID']
+df_insurance[numeric_cols_insurance].boxplot()
+plt.title('Box Plot Variables Numéricas')
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.show()
 
 """## Preguntas
 1. *¿Cuál de las dos opciones sugieres utilizar para evaluar datos no numéricos: imprimir los valores o crear visualizaciones?*
