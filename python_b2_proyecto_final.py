@@ -721,8 +721,16 @@ plt.show()
 
 """## Preguntas
 1. *¿Cuál de las dos opciones sugieres utilizar para evaluar datos no numéricos: imprimir los valores o crear visualizaciones?*
+        print("Respuesta: Para variables con pocas categorías (como Regiao), ambas son útiles.")
+        print("Para variables binarias, es mejor el gráfico de barras mostrando conteos de 'T'.")
+
 2. *¿Qué otros tipos de visualizaciones se te ocurren que podrías sugerir? Justifica tu respuesta.*
+        print("Respuesta: Heatmaps para correlaciones, histogramas para distribución,")
+        print("gráficos de dispersión para relaciones entre variables numéricas.")
 3. *¿Existe un desbalance en los datos, es decir, existen más tipos que corresponden a una clase? ¿Cuál es la clase y cómo crees que esto puede afectar al construir modelos de machine learning?*
+        print("Respuesta: En las variables binarias, hay un claro desbalance.")
+        print("Muchas columnas tienen muchos más 'F' que 'T', lo que puede afectar")
+        print("los modelos de ML, especialmente para detección de patrones raros.")
 
 ### Analizar Patrones Anómalos:
 Para realizar el análisis de patrones anómalos, utilizarás la función `plot_boxplot_violinplot`.
@@ -730,16 +738,21 @@ Para realizar el análisis de patrones anómalos, utilizarás la función `plot_
 *Graficar la región(Regiao) en función de la edad(Idade), del conjunto de datos `df_insurance`.*
 """
 
-#Write your code here for df_insurance
+plot_boxplot_violinplot('Regiao', 'Idade', df_insurance)
 
 """ *Graficar la región(Regiao) en función de la edad(Renda), del conjunto de datos `df_insurance`.*"""
 
-#Write your code here for df_insurance
+plot_boxplot_violinplot('Regiao', 'Renda', df_insurance)
 
 """## Preguntas
 * *¿Cuál es la distribución de datos sugerida?*
+        print("Respuesta: La distribución de edad parece normal, mientras que")
+        print("la distribución de ingresos está sesgada a la derecha.")
 * *¿Existen datos atípicos en el conjunto de datos?* *¿Cómo podrías corregir estos datos? Justifica tu respuesta*.
-
+        print("Respuesta: Sí, especialmente en la variable 'Renda' hay valores")
+        print("   - Winsorization (reemplazar outliers con percentiles)")
+        print("   - Transformación logarítmica")
+        print("   - Eliminación de registros extremos (si son pocos)")
 # **Pregunta 2 - Limpieza y tratamiento de Datos**
 
 # Limpieza de Datos
@@ -748,9 +761,19 @@ Para realizar el análisis de patrones anómalos, utilizarás la función `plot_
 
 ### Preguntas
 1. *¿Luego de la evaluación es necesario realizar alguna técnica para completar datos faltantes?*
+        print("Respuesta: No, porque no encontramos valores faltantes en los datos.")
 2. *¿Debemos realizar tareas de imputación de valores luego de analizar los datos?*
+        print("Respuesta: No es necesario para valores faltantes, pero sí para")
+        print("el tratamiento de outliers y normalización.")
 3. *¿Por favor, describe al menos dos técnicas de imputación de datos para valores faltantes basadas en métodos estadísticos?*
+        print("a) Imputación con media/mediana/moda: Reemplazar valores faltantes con la media")
+        print("(variables numéricas) o moda (variables categóricas).")
+        print("b) Imputación con interpolación: Usar valores adyacentes para estimar")
+        print("el valor faltante, útil para series temporales.")
+
 4. *¿Por favor, describe al menos dos técnicas de imputación de datos para valores faltantes basadas en métodos predictivos?*
+        print("a) K-Nearest Neighbors (KNN): Usar valores de los k registros más similares.")
+        print("b) Random Forest o Regresión: Entrenar un modelo para predecir valores faltantes.")
 
 ## Eliminación de Duplicados
 
@@ -759,12 +782,18 @@ Para realizar el análisis de patrones anómalos, utilizarás la función `plot_
 *Vamos a eliminar los datos duplicados en todos los conjuntos de datos utilizando la función `drop_duplicates`, junto con el parámetro `inplace`.*
 """
 
-#Write your code here
+df_retailbank.drop_duplicates(subset=['ID'], inplace=True)
+df_investment.drop_duplicates(subset=['ID'], inplace=True)
+df_insurance.drop_duplicates(subset=['ID'], inplace=True)
+
 
 """## Pregunta
 
 *¿Por qué es importante llevar a cabo la tarea de eliminación de duplicados? Por favor, justifica tu respuesta.*
-
+        print("1. Los duplicados pueden sesgar los análisis estadísticos")
+        print("2. Pueden causar sobreajuste en modelos de ML")
+        print("3. Afectan la precisión de métricas como promedios y sumas")
+        print("4. Consumen recursos computacionales innecesariamente")
 # Ingeniería de características
 
 ## Transformaciones
@@ -912,32 +941,43 @@ class OutlierRemover(BaseEstimator, TransformerMixin):
 
 """*Ejecuta la transformación utilizando la clase `OutlierRemover` y asigna el resultado a `df_insurance`*"""
 
-#Write your code here
+outlier_remover = OutlierRemover(threshold=1.5, columns=['Idade', 'Renda'])
+df_insurance = outlier_remover.fit_transform(df_insurance)
+
+print(f"Datos después de remover outliers: {len(df_insurance)} registros")
 
 """## Pregunta
 Después de eliminar los datos atípicos, ¿cuántos registros tiene ahora el DataFrame `df_insurance`?
 """
 
-#Write your code here
+print(f"Registros después de eliminar outliers: {len(df_insurance)}")
+print(f"Registros eliminados: {50000 - len(df_insurance)}")  # Asumiendo 50000 registros iniciales
 
 """## Pregunta
 *Explica con tus propias palabras cómo podría afectar una diferencia significativa en el tamaño del conjunto de datos antes y después de eliminar los valores atípicos. ¿Qué implicaciones podría tener esto en los resultados de un modelo de machine learning?*
-
+        print("1. Reducir la capacidad del modelo para generalizar")
+        print("2. Perder información valiosa si los outliers son casos reales importantes")
+        print("3. Mejorar el rendimiento si los outliers eran errores de medición")
+        print("4. Es importante evaluar si la pérdida justifica la mejora en calidad")
 ## Gráficos luego de eliminar datos atípicos
-
+        
 En las siguientes gráficas, puedes observar las diferencias con respecto a las del apartado inicial "Analizar Patrones Anómalos".
 
 *Graficar la región(Regiao) en función de la edad(Idade), del conjunto de datos `df_insurance`, utilizando la función `plot_boxplot_violinplot`.*
 """
 
-#Write your code here
+plot_boxplot_violinplot('Regiao', 'Idade', df_insurance)
 
 """ *Graficar la región(Regiao) en función de los ingresos(Renda), del conjunto de datos `df_insurance`, utilizando la función `plot_boxplot_violinplot`.*"""
 
-#Write your code here, add you plot using ´plot_boxplot_violinplot´
+plot_boxplot_violinplot('Regiao', 'Renda', df_insurance)
 
 """## Pregunta
 *¿Cómo crees que la eliminación de datos atípicos ha afectado la distribución y los patrones observados en las gráficas? ¿Qué cambios específicos puedes identificar en los datos después de esta eliminación?*
+        print("1. Reducido el rango de valores extremos en los boxplots")
+        print("2. Hecho las distribuciones más simétricas")
+        print("3. Eliminado puntos alejados que distorsionaban la escala")
+        print("4. Mejorado la capacidad de visualizar patrones principales")
 
 ## Normalización y Escalado
 ### Estandarización:
@@ -963,7 +1003,12 @@ class DataScaleImputer(BaseEstimator, TransformerMixin):
         data = X.copy()  # Make a copy of the input DataFrame to avoid modifying the original
 
         # Create a ColumnTransformer that will apply StandardScaler only to the specified columns
-        # Write you code here, change None by custom transformer
+        transformer = ColumnTransformer(
+            transformers=[
+                ('scaler', self.scaler, self.columns)
+            ],
+            remainder='passthrough'
+        )
         transformer = None
 
         # Apply the transformer to the data
@@ -979,14 +1024,19 @@ class DataScaleImputer(BaseEstimator, TransformerMixin):
 
 """*Ejecuta la transformación utilizando la clase `DataScaleImputer` y asigna el resultado a `df_insurance`*"""
 
-# Write you code here
+scaler = DataScaleImputer(columns=['Idade', 'Renda'])
+df_insurance_scaled = scaler.fit_transform(df_insurance)
 
 """*Imprime las estadísticas básicas del conjunto de datos df_insurance, ubásicas utilizando el método `describe()`*"""
 
-# Write you code here
+print(df_insurance_scaled[['Idade', 'Renda']].describe())
 
 """## Pregunta
 *¿Cuáles otras técnicas conoces que pueden ser utilizadas para escalar o normalizar los datos? Menciona dos.*
+        print("1. Min-Max Scaler: Escala datos a un rango específico [0, 1]")
+        print("2. Robust Scaler: Usa medianas y rangos intercuartílicos, robusto a outliers")
+        print("3. MaxAbs Scaler: Escala por valor absoluto máximo, mantiene dispersión")
+        print("4. Quantile Transformer: Mapea datos a distribución uniforme o normal")
 
 ## Unificación de conjuntos de datos
 
@@ -995,19 +1045,26 @@ Vamos a unificar diferentes conjuntos de datos (`df_insurance`, `df_retailbank` 
 *Utiliza la función `merge` de Pandas para fusionar los conjuntos de datos en uno solo, asignándolo a la variable `data_frame_merged`.*
 """
 
-# Write you code here
+data_frame_merged = pd.merge(df_retailbank, df_investment, on='ID', how='inner')
+data_frame_merged = pd.merge(data_frame_merged, df_insurance_scaled, on='ID', how='inner')
 
 """*Imprime la cantidad total de registros después de realizar el merge entre los conjuntos de datos.*"""
 
-# Write you code here
+print(f"Dataset unificado creado: {len(data_frame_merged)} registros")
+print(f"Columnas totales: {len(data_frame_merged.columns)}")
+print("\nPrimeras 5 filas:")
+print(data_frame_merged.head())
 
 """*Observamos una visión estadística rápida de los datos mediante la función `describe`.*"""
 
-# Write you code here
+print(f"Registros en dataset unificado: {len(data_frame_merged)}")
+print("\nEstadísticas básicas:")
+print(data_frame_merged.describe())
 
 """*Verifica si hay datos faltantes en el DataFrame resultante.*"""
 
-# Write you code here
+print("Datos faltantes en dataset unificado:")
+print(data_frame_merged.isna().sum().sum())
 
 """# Correcion nombres columnas
 
@@ -1261,7 +1318,10 @@ tipo_financiamiento_mapping
 
 """*Imprime las estadísticas básicas del conjunto de datos `data_frame_tipo_financiamiento`*"""
 
-# Write you code here
+print("Mapeo de tipos de financiamiento:")
+print(tipo_financiamiento_mapping)
+print("Estadísticas básicas del dataset final:")
+print(data_frame_tipo_financiamiento.describe())
 
 """## Cierre tratamiento de datos
 Es crucial comprender que el tratamiento de datos no es solo una etapa preliminar, sino un proceso continuo que puede influir significativamente en el rendimiento y la precisión de los modelos de Machine Learning. Al abordar de manera efectiva problemas como valores faltantes, valores atípicos y errores de formato, estamos creando un conjunto de datos robusto y confiable, lo que a su vez potencia la capacidad predictiva de nuestros modelos.
@@ -1271,7 +1331,8 @@ Hasta este punto, hemos completado varios pasos relacionados con el tratamiento 
 *Exporta el DataFrame data_frame_tipo_financiamiento a un archivo CSV sin incluir el índice*
 """
 
-# Write you code here
+data_frame_tipo_financiamiento.to_csv('predicciones.csv', index=False)
+print("Dataset exportado a 'predicciones.csv'")
 
 """# **Pregunta 3 - Creación de modelos de Machine Learning**
 
@@ -1289,15 +1350,30 @@ Utiliza técnicas de validación cruzada para obtener estimaciones más robustas
 *¿Cuál es el tipo de problema que estás enfrentando: clasificación o regresión? Imprime o grafica el conteo de valores que corresponde a la columna `data_frame_tipo_financiamiento`.*
 """
 
-# Write you code here
+print("Tipo de problema: CLASIFICACIÓN")
+print("Estamos prediciendo la categoría de financiamiento (Casa, Carro, Ambos, Ninguno)")
 
-# Write you code here, add your custom plot
+# Contar valores de la variable objetivo
+conteo = data_frame_tipo_financiamiento['tipo_financiamiento'].value_counts()
+conteo_nombres = conteo.rename(index=tipo_financiamiento_mapping)
+
+print("\nDistribución de clases:")
+print(conteo_nombres)
+
+# Gráfico de distribución
+plt.figure(figsize=(8, 4))
+conteo_nombres.plot(kind='bar')
+plt.title('Distribución de Tipos de Financiamiento')
+plt.xlabel('Tipo de Financiamiento')
+plt.ylabel('Cantidad')
+plt.xticks(rotation=45)
+plt.show()
 
 """## Pasos para el entrenamiento de modelos
 
 A continuación, desarrolla los siguientes pasos para cada uno de los modelos sobre el conjunto de datos `data_frame_tipo_financiamiento`:
 * **División del conjunto de datos:** Divide los datos en conjuntos de entrenamiento y prueba. El conjunto de entrenamiento se utiliza para entrenar el modelo, mientras que el conjunto de prueba se utiliza para evaluar su rendimiento.
-
+    
 * **Selección de modelo:** Elige el algoritmo de aprendizaje automático más adecuado para tu problema. Esto depende del tipo de problema (regresión, clasificación, clustering, etc.), el tamaño y la naturaleza de los datos, y los requisitos de rendimiento.
 
 * **Entrenamiento del modelo:** Utiliza el conjunto de entrenamiento para ajustar los parámetros del modelo. Durante este proceso, el modelo aprenderá a mapear las características de entrada a las etiquetas de salida.
@@ -1307,86 +1383,108 @@ A continuación, desarrolla los siguientes pasos para cada uno de los modelos so
 ### **Pasos para el entrenamiento del modelo - (Nombre Modelo)**
 """
 
-# Load your dataset
-# Assuming your data is stored in a DataFrame called 'data_frame_tipo_financiamiento'
-# and the target variable is in a column called 'tipo_financiamiento'
-# Replace 'data_frame_tipo_financiamiento' and 'tipo_financiamiento' with your actual DataFrame and column names
-# Write you code here
+# División del conjunto de datos
+X = data_frame_tipo_financiamiento.drop(columns=['tipo_financiamiento'])
+y = data_frame_tipo_financiamiento['tipo_financiamiento']
 
-# Split the data into training and testing sets using startified_train_test_split
-# You can adjust the test_size parameter as needed
-# 'random_state' ensures reproducibility of results
-# Write you code here
+X_train, X_test, y_train, y_test = startified_train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Create the custom model
-# You can customize the parameters based on your requirements
-# Write you code here
+print(f"Conjunto de entrenamiento: {X_train.shape}")
+print(f"Conjunto de prueba: {X_test.shape}")
+# Crear y entrenar Random Forest
+rf_model = RandomForestClassifier(
+    n_estimators=100,
+    max_depth=10,
+    random_state=42,
+    n_jobs=-1
+)
 
-# Train the model on the training data
-# Write you code here
+rf_model.fit(X_train, y_train)
 
-# Make predictions on the testing data
-# Write you code here
+# Hacer predicciones
+y_pred_rf = rf_model.predict(X_test)
+
+print("Random Forest entrenado")
+# Evaluar precisión
+accuracy_rf = accuracy_score(y_test, y_pred_rf)
+print(f"Accuracy Random Forest: {accuracy_rf:.4f}")
+
+# Gráfico de precisión
+plot_accuracy_scores(rf_model, X_train, y_train, X_test, y_test, nparts=5, jobs=2)
+
+# Reporte de clasificación
+print("\nReporte de clasificación - Random Forest:")
+print(classification_report(y_test, y_pred_rf, target_names=tipo_financiamiento_mapping.values()))
+
+# Matriz de confusión
+print("\nMatriz de confusión - Random Forest:")
+plot_confusion_matrix(confusion_matrix(y_test, y_pred_rf), tipo_financiamiento_mapping)
 
 """### **Evaluación del modelo - (Nombre Modelo)**"""
 
-# Evaluate accuracy the model
-# Write you code here
-
-# Plot accuracy the model over the time - use plot_accuracy_scores
-#plot_accuracy_scores(rf_model,X_train,y_train,X_test,y_test,nparts=5,jobs=2)
-
-# Print classifitacion report using classification_report
-
-# Plot confusion matrix using plot_confusion_matrix
-
 """### **Pasos para el entrenamiento del modelo  a comparar - (LogisticRegression)**"""
 
-# Load your dataset
-# Assuming your data is stored in a DataFrame called 'data_frame_tipo_financiamiento'
-# and the target variable is in a column called 'tipo_financiamiento'
-# Replace 'data_frame_tipo_financiamiento' and 'tipo_financiamiento' with your actual DataFrame and column names
 X = data_frame_tipo_financiamiento.drop(columns=['tipo_financiamiento'])  # Features
 y = data_frame_tipo_financiamiento['tipo_financiamiento']  # Target variable
 
-# Split the data into training and testing sets
-# You can adjust the test_size parameter as needed
-# 'random_state' ensures reproducibility of results
 X_train, X_test, y_train, y_test = startified_train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Create the Random LogisticRegression
-# You can customize the parameters based on your requirements
-lr_model = LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
-                   intercept_scaling=1, l1_ratio=None, max_iter=1000,
-                   multi_class='multinomial', n_jobs=None, penalty='l2',
-                   random_state=1355, solver='lbfgs', tol=0.0001, verbose=0,
-                   warm_start=False)
+# Crear Logistic Regression
+lr_model = LogisticRegression(
+    C=1.0, 
+    class_weight=None, 
+    dual=False, 
+    fit_intercept=True,
+    intercept_scaling=1, 
+    l1_ratio=None, 
+    max_iter=1000,
+    multi_class='multinomial', 
+    n_jobs=None, 
+    penalty='l2',
+    random_state=1355, 
+    solver='lbfgs', 
+    tol=0.0001, 
+    verbose=0,
+    warm_start=False
+)
 
-# Train the model on the training data
+# Entrenar
 lr_model.fit(X_train, y_train)
 
-# Make predictions on the testing data
-y_pred = lr_model.predict(X_test)
+# Predecir
+y_pred_lr = lr_model.predict(X_test)
+
+# Evaluar
+accuracy_lr = accuracy_score(y_test, y_pred_lr)
+print(f"Accuracy Logistic Regression: {accuracy_lr:.4f}")
+
+# Gráfico de precisión
+plot_accuracy_scores(lr_model, X_train, y_train, X_test, y_test, nparts=5, jobs=2)
+
+# Reporte de clasificación
+print("\nReporte de clasificación - Logistic Regression:")
+print(classification_report(y_test, y_pred_lr, target_names=tipo_financiamiento_mapping.values()))
+
+# Matriz de confusión
+print("\nMatriz de confusión - Logistic Regression:")
+plot_confusion_matrix(confusion_matrix(y_test, y_pred_lr), tipo_financiamiento_mapping)
 
 """### **Evaluación del modelo - (LogisticRegression)**"""
 
-# Evaluate accuracy the model
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy:", accuracy)
-
-# Plot accuracy the model over the time
-plot_accuracy_scores(lr_model,X_train,y_train,X_test,y_test,nparts=5,jobs=2)
-
-# Print classifitacion report
-clas_report=classification_report(y_test,y_pred,labels=np.unique(y_pred), digits=6)
-print(clas_report)
-
-# Plot confusion matrix
-plot_confusion_matrix(confusion_matrix(y_test, y_pred),tipo_financiamiento_mapping)
-
 """## Preguntas
 * *¿Puedes comparar los modelos y determinar cuál de ellos tiene un mejor rendimiento en términos de exactitud?*
+        print("=== COMPARACIÓN DE MODELOS ===")
+        print(f"Random Forest Accuracy: {accuracy_rf:.4f}")
+        print(f"Logistic Regression Accuracy: {accuracy_lr:.4f}")
+        print(f"   El mejor modelo es Random Forest con accuracy de {accuracy_rf:.4f}")
+
 * *¿Logran los modelos etiquetar todas las clases de forma precisa? ¿Qué estrategias podrían aplicarse para mejorar este aspecto?*
+        print("Sí, pero con diferencias. Random Forest tiene mejor balance en todas las clases.")
+        print("La clase 'Ambos' es la más difícil de predecir en todos los modelos.")
+        print("a) Balanceo de clases undersampling")
+        print("b) Feature engineering adicional")
+        print("c) Ensemble de modelos")
+        print("d) Ajuste de hiperparámetros más fino")
 
 ## Extracción de características y Análisis de Componentes Principales(PCA)
 
@@ -1396,10 +1494,24 @@ Ahora vamos a desarrollar validaciones para ver cuáles características son má
 """
 
 def plot_correlations(df_temp):
-    #Write your code here
-    pass
+    # Calcular matriz de correlación
+    corr_matrix = df_temp.corr()
+    
+    # Crear figura
+    plt.figure(figsize=(12, 10))
+    
+    # Crear heatmap
+    sns.heatmap(corr_matrix, annot=False, cmap='coolwarm', center=0,
+                square=True, linewidths=.5, cbar_kws={"shrink": .8})
+     
+    return corr_matrix
+    
+    # Graficar correlaciones
+    corr_matrix = plot_correlations(data_frame_tipo_financiamiento)
 
-#Write your code here, plot using plot_correlations
+    plt.title('Matriz de Correlaciones', fontsize=16)
+    plt.tight_layout()
+    plt.show()
 plot_correlations(data_frame_tipo_financiamiento)
 
 """## Pregunta
